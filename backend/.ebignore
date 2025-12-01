@@ -1,0 +1,16 @@
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+*.db-shm
+*.db-wal
+.env
+.venv
+*.log
+.DS_Store
+.git/
+.gitignore

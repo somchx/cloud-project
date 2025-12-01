@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 import models
-from routers import products, sales, dashboard, categories, auth
+from routers import products, sales, dashboard, categories, auth, admin
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -23,6 +23,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
+app.include_router(admin.router)
 app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(sales.router)

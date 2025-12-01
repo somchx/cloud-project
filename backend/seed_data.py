@@ -5,21 +5,22 @@ import models
 def seed_database():
     db = SessionLocal()
     
-    # Create users (initial data - always exists)
+    # Create users (initial data - check if exist first)
     users_data = [
         {"email": "6710421004@stu.nida.ac.th", "password": "1234"},
         {"email": "6610421009@stu.nida.ac.th", "password": "1234"},
     ]
     
-    # Clear existing users and recreate
-    db.query(models.User).delete()
-    
-    for user_data in users_data:
-        user = models.User(**user_data)
-        db.add(user)
-    
-    db.commit()
-    print("✅ Users created successfully!")
+    # Only create users if they don't exist
+    existing_users = db.query(models.User).count()
+    if existing_users == 0:
+        for user_data in users_data:
+            user = models.User(**user_data)
+            db.add(user)
+        db.commit()
+        print("✅ Users created successfully!")
+    else:
+        print(f"✅ Users already exist ({existing_users} users), skipping...")
     
     # Create categories (skip if already exist)
     existing_categories = db.query(models.Category).count()
