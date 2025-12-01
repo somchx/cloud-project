@@ -118,25 +118,26 @@ function ProductManagement() {
 
   return (
     <div className="product-management">
-      <h2>📦 จัดการสินค้า</h2>
+      <h2>Product Management</h2>
 
       <div className="add-product-form">
-        <h3>{editingProduct ? '✏️ แก้ไขสินค้า' : '➕ เพิ่มสินค้าใหม่'}</h3>
+        <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-group">
-              <label>ชื่อสินค้า *</label>
+              <label>Product Name *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
+                placeholder="Enter product name"
               />
             </div>
 
             <div className="form-group">
-              <label>ราคา (บาท) *</label>
+              <label>Price (฿) *</label>
               <input
                 type="number"
                 name="price"
@@ -144,18 +145,19 @@ function ProductManagement() {
                 value={formData.price}
                 onChange={handleInputChange}
                 required
+                placeholder="0.00"
               />
             </div>
 
             <div className="form-group">
-              <label>หมวดหมู่ *</label>
+              <label>Category *</label>
               <select
                 name="category_id"
                 value={formData.category_id}
                 onChange={handleInputChange}
                 required
               >
-                <option value="">-- เลือกหมวดหมู่ --</option>
+                <option value="">Select category</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
@@ -163,34 +165,36 @@ function ProductManagement() {
             </div>
 
             <div className="form-group">
-              <label>จำนวนคงเหลือ *</label>
+              <label>Stock *</label>
               <input
                 type="number"
                 name="stock"
                 value={formData.stock}
                 onChange={handleInputChange}
                 required
+                placeholder="0"
               />
             </div>
 
             <div className="form-group">
-              <label>URL รูปภาพ (ถ้ามี)</label>
+              <label>Image URL (optional)</label>
               <input
                 type="text"
                 name="image_url"
                 value={formData.image_url}
                 onChange={handleInputChange}
+                placeholder="https://..."
               />
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
             <button type="submit" className="btn btn-primary">
-              {editingProduct ? '💾 บันทึกการแก้ไข' : '➕ เพิ่มสินค้า'}
+              {editingProduct ? 'Save Changes' : 'Add Product'}
             </button>
             {editingProduct && (
               <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
-                ยกเลิก
+                Cancel
               </button>
             )}
           </div>
@@ -202,11 +206,11 @@ function ProductManagement() {
           <thead>
             <tr>
               <th>ID</th>
-              <th>ชื่อสินค้า</th>
-              <th>ราคา</th>
-              <th>หมวดหมู่</th>
-              <th>คงเหลือ</th>
-              <th>จัดการ</th>
+              <th>Product Name</th>
+              <th>Price</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -220,10 +224,10 @@ function ProductManagement() {
                 <td>
                   <div className="action-buttons">
                     <button className="btn btn-secondary" onClick={() => handleEdit(product)}>
-                      ✏️ แก้ไข
+                      Edit
                     </button>
                     <button className="btn btn-danger" onClick={() => handleDelete(product.id)}>
-                      🗑️ ลบ
+                      Delete
                     </button>
                   </div>
                 </td>
@@ -234,8 +238,8 @@ function ProductManagement() {
 
         {products.length === 0 && (
           <div className="empty-state">
-            <h3>ยังไม่มีสินค้า</h3>
-            <p>เพิ่มสินค้าใหม่เพื่อเริ่มต้น</p>
+            <h3>No Products</h3>
+            <p>Add your first product to get started</p>
           </div>
         )}
       </div>

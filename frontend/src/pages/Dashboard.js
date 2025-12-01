@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getDashboardStats } from '../api';
+import '../Dashboard.css';
 
 function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -25,43 +26,72 @@ function Dashboard() {
   }
 
   return (
-    <div className="dashboard">
-      <h2>📊 Dashboard - สรุปยอดขาย</h2>
-      
-      <div className="stats-grid">
-        <div className="stat-card">
-          <h3>ยอดขายวันนี้</h3>
-          <div className="stat-value">
-            ฿{stats?.total_sales_today?.toFixed(2) || '0.00'}
+    <div className="dashboard-minimal">
+      <div className="dashboard-header">
+        <h1>Dashboard</h1>
+        <p className="dashboard-subtitle">Sales Overview</p>
+      </div>
+
+      <div className="stats-grid-minimal">
+        <div className="stat-card-minimal">
+          <div className="stat-label">Today's Revenue</div>
+          <div className="stat-value-minimal">
+            ฿{stats?.total_sales_today?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
           </div>
+          <div className="stat-trend">+12% from yesterday</div>
         </div>
-        
-        <div className="stat-card">
-          <h3>จำนวนบิลวันนี้</h3>
-          <div className="stat-value">
+
+        <div className="stat-card-minimal">
+          <div className="stat-label">Orders</div>
+          <div className="stat-value-minimal">
             {stats?.total_orders_today || 0}
           </div>
+          <div className="stat-trend">Today</div>
+        </div>
+
+        <div className="stat-card-minimal">
+          <div className="stat-label">Average Order</div>
+          <div className="stat-value-minimal">
+            ฿{stats?.total_orders_today > 0
+              ? ((stats?.total_sales_today || 0) / stats.total_orders_today).toFixed(2)
+              : '0.00'}
+          </div>
+          <div className="stat-trend">Per transaction</div>
         </div>
       </div>
 
-      <div className="top-products">
-        <h3>🏆 สินค้าขายดี (Top 5)</h3>
-        {stats?.top_selling_products?.length > 0 ? (
-          stats.top_selling_products.map((product, index) => (
-            <div key={product.id} className="product-item">
-              <span>
-                {index + 1}. {product.name}
-              </span>
-              <span>
-                ขายไป {product.total_sold} ชิ้น
-              </span>
-            </div>
-          ))
-        ) : (
-          <div className="empty-state">
-            <p>ยังไม่มีข้อมูลการขาย</p>
+      <div className="top-products-minimal">
+        <div className="section-header">
+          <h3>Top Selling Products</h3>
+        </div>
+
+        <div className="products-table">
+          <div className="table-header">
+            <div className="col-rank">#</div>
+            <div className="col-name">Product</div>
+            <div className="col-sold">Sold</div>
+            <div className="col-revenue">Revenue</div>
           </div>
-        )}
+
+          {stats?.top_selling_products?.length > 0 ? (
+            stats.top_selling_products.map((product, index) => (
+              <div key={product.id} className="table-row">
+                <div className="col-rank">
+                  <span className={`rank-badge ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''}`}>
+                    {index + 1}
+                  </span>
+                </div>
+                <div className="col-name">{product.name}</div>
+                <div className="col-sold">{product.total_sold} units</div>
+                <div className="col-revenue">฿{(product.total_sold * (product.price || 0)).toFixed(2)}</div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-state-minimal">
+              <p>No sales data available</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

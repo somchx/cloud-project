@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts, getCategories, createSale } from '../api';
+import { getProductImage } from '../utils/productImages';
+import '../POS.css';
 
 function POS() {
   const [products, setProducts] = useState([]);
@@ -9,6 +11,7 @@ function POS() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('credit-card');
 
   useEffect(() => {
     fetchData();
@@ -31,7 +34,7 @@ function POS() {
 
   const addToCart = (product) => {
     const existingItem = cart.find(item => item.id === product.id);
-    
+
     if (existingItem) {
       if (existingItem.quantity < product.stock) {
         setCart(cart.map(item =>
@@ -54,9 +57,9 @@ function POS() {
   const updateQuantity = (productId, change) => {
     const product = products.find(p => p.id === productId);
     const cartItem = cart.find(item => item.id === productId);
-    
+
     const newQuantity = cartItem.quantity + change;
-    
+
     if (newQuantity <= 0) {
       setCart(cart.filter(item => item.id !== productId));
     } else if (newQuantity <= product.stock) {
@@ -72,6 +75,14 @@ function POS() {
 
   const getTotal = () => {
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  };
+
+  const getTax = () => {
+    return getTotal() * 0.07; // 7% VAT
+  };
+
+  const getFinalTotal = () => {
+    return getTotal() + getTax();
   };
 
   const handleCheckout = async () => {
@@ -117,98 +128,146 @@ function POS() {
   }
 
   return (
-    <div className="pos-container">
-      <div className="products-section">
-        <h2>🛍️ เลือกสินค้า</h2>
-        
-        <div className="search-filter">
-          <input
-            type="text"
-            placeholder="🔍 ค้นหาสินค้า..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">ทุกหมวดหมู่</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="products-grid">
-          {filteredProducts.map(product => (
-            <div
-              key={product.id}
-              className="product-card"
-              onClick={() => addToCart(product)}
+    <div className="pos-container-modern">
+      <div className="pos-main-content">
+        {/* Left Section - Products */}
+        <div className="products-section-modern">
+          {/* Category Tabs */}
+          <div className="category-tabs">
+            <button
+              className={!selectedCategory ? 'category-tab active' : 'category-tab'}
+              onClick={() => setSelectedCategory('')}
             >
-              <h4>{product.name}</h4>
-              <div className="product-price">฿{product.price}</div>
-              <div className="product-stock">
-                คงเหลือ: {product.stock} ชิ้น
-              </div>
+              All
+            </button>
+            {categories.map(cat => (
+              <button
+                key={cat.id}
+                className={selectedCategory === cat.id.toString() ? 'category-tab active' : 'category-tab'}
+                onClick={() => setSelectedCategory(cat.id.toString())}
+              >
+                {cat.name}
+              </button>
+            ))}
+            <div className="menu-search-bar">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search menu"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="empty-state">
-            <h3>ไม่พบสินค้า</h3>
-            <p>ลองค้นหาด้วยคำอื่นหรือเปลี่ยนหมวดหมู่</p>
           </div>
-        )}
-      </div>
 
-      <div className="cart-section">
-        <h3>🛒 ตะกร้าสินค้า</h3>
-        
-        <div className="cart-items">
-          {cart.length === 0 ? (
-            <div className="empty-state">
-              <p>ตะกร้าว่างเปล่า</p>
-            </div>
-          ) : (
-            cart.map(item => (
-              <div key={item.id} className="cart-item">
-                <div className="cart-item-info">
-                  <div className="cart-item-name">{item.name}</div>
-                  <div className="cart-item-price">
-                    ฿{item.price} x {item.quantity} = ฿{(item.price * item.quantity).toFixed(2)}
+          {/* Products Grid */}
+          <div className="products-grid-modern">
+            {filteredProducts.map(product => (
+              <div key={product.id} className="product-card-modern">
+                <div className="product-image">
+                  <img
+                    src={getProductImage(product.name)}
+                    alt={product.name}
+                    onError={(e) => { e.target.src = '/img/default.png'; }}
+                  />
+                </div>
+                <div className="product-info">
+                  <h4>{product.name}</h4>
+                  <p className="product-description">คงเหลือ {product.stock} ชิ้น</p>
+                </div>
+                <div className="product-footer">
+                  <div className="product-price-modern">฿{product.price.toFixed(1)}</div>
+                  <div className="product-actions">
+                    <button
+                      className="qty-btn"
+                      onClick={() => {
+                        const item = cart.find(i => i.id === product.id);
+                        if (item) updateQuantity(product.id, -1);
+                      }}
+                      disabled={!cart.find(i => i.id === product.id)}
+                    >
+                      -
+                    </button>
+                    <span className="qty-display">
+                      {cart.find(i => i.id === product.id)?.quantity || 0}
+                    </span>
+                    <button
+                      className="qty-btn-add"
+                      onClick={() => addToCart(product)}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-                <div className="cart-item-controls">
-                  <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-                  <span className="quantity">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-                </div>
               </div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
 
-        <div className="cart-total">
-          <div className="total-amount">
-            <span>ยอดรวม:</span>
-            <span>฿{getTotal().toFixed(2)}</span>
+        {/* Right Section - Invoice */}
+        <div className="invoice-section">
+          <h2 className="invoice-title">Invoice</h2>
+
+          {/* Cart Items */}
+          <div className="invoice-items">
+            {cart.length === 0 ? (
+              <div className="empty-invoice">
+                <p>ไม่มีสินค้าในตะกร้า</p>
+              </div>
+            ) : (
+              cart.map(item => (
+                <div key={item.id} className="invoice-item">
+                  <div className="invoice-item-image">
+                    <img
+                      src={getProductImage(item.name)}
+                      alt={item.name}
+                      onError={(e) => { e.target.src = '/img/default.png'; }}
+                    />
+                  </div>
+                  <div className="invoice-item-details">
+                    <h4>{item.name}</h4>
+                    <div className="invoice-item-quantity">{item.quantity}x</div>
+                    <div className="invoice-item-note">Don't Add Vegetables</div>
+                  </div>
+                  <div className="invoice-item-price">
+                    ฿{(item.price * item.quantity).toFixed(1)}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-          
-          <button
-            className="checkout-btn"
-            onClick={() => setShowCheckoutModal(true)}
-            disabled={cart.length === 0}
-          >
-            💳 ชำระเงิน
-          </button>
-          
-          {cart.length > 0 && (
-            <button className="clear-cart-btn" onClick={clearCart}>
-              🗑️ ล้างตะกร้า
+
+          {/* Payment Summary */}
+          <div className="payment-summary">
+            <h3>Payment Summary</h3>
+            <div className="summary-row">
+              <span>Sub Total</span>
+              <span>฿{getTotal().toFixed(1)}</span>
+            </div>
+            <div className="summary-row">
+              <span>Tax</span>
+              <span>฿{getTax().toFixed(1)}</span>
+            </div>
+            <div className="summary-row total-row">
+              <span>Total Payment</span>
+              <span>฿{getFinalTotal().toFixed(1)}</span>
+            </div>
+
+            {/* Place Order Button */}
+            <button
+              className="place-order-btn"
+              onClick={handleCheckout}
+              disabled={cart.length === 0}
+            >
+              Place An Order
             </button>
-          )}
+
+            {cart.length > 0 && (
+              <button className="clear-cart-btn-modern" onClick={clearCart}>
+                🗑️ Clear Cart
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -216,8 +275,8 @@ function POS() {
         <div className="modal-overlay">
           <div className="modal">
             <h3>ยืนยันการชำระเงิน</h3>
-            <p>ยอดรวมทั้งหมด: <strong>฿{getTotal().toFixed(2)}</strong></p>
-            <p>จำนวนสินค้า: {cart.length} รายการ</p>
+            <p>ยอดรวมทั้งหมด: <strong>฿{getFinalTotal().toFixed(2)}</strong></p>
+            <p>วิธีการชำระเงิน: <strong>{paymentMethod === 'credit-card' ? 'บัตรเครดิต' : paymentMethod === 'paylater' ? 'จ่ายทีหลัง' : 'เงินสด'}</strong></p>
             <div className="modal-buttons">
               <button className="btn btn-primary" onClick={handleCheckout}>
                 ยืนยัน
