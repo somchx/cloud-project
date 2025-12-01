@@ -12,7 +12,10 @@ app = FastAPI(title="POS Grocery System API", version="1.0.0")
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "http://pos-grocery-frontend-1764571829.s3-website-ap-southeast-1.amazonaws.com"  # Production
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

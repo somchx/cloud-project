@@ -1,8 +1,18 @@
-# POS ร้านขายของชำ - ระบบขายของแบบครบวงจร
+# 🛒 POS ร้านขายของชำ - ระบบขายของแบบครบวงจร
+
+[![Deployed](https://img.shields.io/badge/Deployed-AWS-orange)](http://pos-grocery-frontend-1764571829.s3-website-ap-southeast-1.amazonaws.com)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)](http://pos-backend-prod.eba-n3hivubt.ap-southeast-1.elasticbeanstalk.com/docs)
+[![Frontend](https://img.shields.io/badge/Frontend-React-61dafb)](http://pos-grocery-frontend-1764571829.s3-website-ap-southeast-1.amazonaws.com)
+
+## 🌐 Live Demo
+
+- **Frontend**: http://pos-grocery-frontend-1764571829.s3-website-ap-southeast-1.amazonaws.com
+- **Backend API**: http://pos-backend-prod.eba-n3hivubt.ap-southeast-1.elasticbeanstalk.com
+- **API Docs**: http://pos-backend-prod.eba-n3hivubt.ap-southeast-1.elasticbeanstalk.com/docs
 
 ## 📖 ภาพรวมโปรเจกต์
 
-ระบบ POS (Point of Sale) สำหรับร้านขายของชำ พัฒนาด้วย FastAPI (Backend) และ React (Frontend) พร้อม SQLite Database
+ระบบ POS (Point of Sale) สำหรับร้านขายของชำ พัฒนาด้วย **FastAPI** (Backend) และ **React** (Frontend) พร้อม **SQLite** Database และ Deploy บน **AWS** (Elastic Beanstalk + S3)
 
 ### ✨ ฟีเจอร์หลัก
 - 🛒 **หน้าขายของ (POS)**: เลือกสินค้าได้หลายชิ้น คำนวณยอดรวมอัตโนมัติ
@@ -10,6 +20,7 @@
 - 📊 **Dashboard**: แสดงยอดขายวันนี้ จำนวนบิล และสินค้าขายดี
 - 🏷️ **หมวดหมู่สินค้า**: จัดกลุ่มสินค้าตามประเภท
 - 🔍 **ค้นหาสินค้า**: ค้นหาตามชื่อหรือหมวดหมู่
+- ☁️ **Cloud Deployment**: Deploy แบบ Production-ready บน AWS
 
 ---
 
@@ -48,6 +59,39 @@ pos-cloud/
 │   └── .env.example
 │
 └── README.md
+```
+
+---
+
+## ☁️ AWS Deployment (Production)
+
+### 🚀 Live URLs
+
+ระบบนี้ถูก Deploy แล้วบน AWS:
+
+- **🌐 Frontend**: http://pos-grocery-frontend-1764571829.s3-website-ap-southeast-1.amazonaws.com
+- **🔌 Backend API**: http://pos-backend-prod.eba-n3hivubt.ap-southeast-1.elasticbeanstalk.com
+- **📚 API Docs**: http://pos-backend-prod.eba-n3hivubt.ap-southeast-1.elasticbeanstalk.com/docs
+
+### 📋 Architecture
+
+```
+User Browser → S3 (Frontend) → Elastic Beanstalk (Backend + SQLite)
+```
+
+### 🔄 Update Deployment
+
+**Backend:**
+```bash
+cd backend
+eb deploy pos-backend-prod
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run build
+aws s3 sync build/ s3://pos-grocery-frontend-1764571829/ --delete
 ```
 
 ---
