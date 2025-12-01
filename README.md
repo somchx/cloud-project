@@ -454,23 +454,21 @@ python seed_data.py
 
 ---
 
-## 👥 ผู้พัฒนา (Authors)
+## 👥 Authors
 
-### นักศึกษา
+### Students
 - **6710421004** Chananya Aiamprakhon
 - **6610421009** Natchaporn Saithorn
 
-### รายวิชา
+### Course
 **CI 6103** Cloud Computing 1-68
 
-### สถาบันการศึกษา
-**National Institute of Development Administration (NIDA)**  
-สถาบันบัณฑิตพัฒนบริหารศาสตร์
+### Institution
+**National Institute of Development Administration (NIDA)**
 
-### คณะและสาขาวิชา
-**คณะสถิติประยุกต์**  
-สาขาวิชา: วิทยาการคอมพิวเตอร์และระบบสารสนเทศ (CSIS)  
-Computer Science and Information Systems
+### Faculty & Program
+**Faculty of Applied Statistics**  
+Program: Computer Science and Information Systems (CSIS)
 
 ---
 
