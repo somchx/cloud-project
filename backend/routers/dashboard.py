@@ -30,9 +30,10 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     top_products = db.query(
         models.Product.id,
         models.Product.name,
+        models.Product.price,
         func.sum(models.SaleItem.quantity).label('total_sold')
     ).join(models.SaleItem)\
-     .group_by(models.Product.id)\
+     .group_by(models.Product.id, models.Product.name, models.Product.price)\
      .order_by(func.sum(models.SaleItem.quantity).desc())\
      .limit(5)\
      .all()
@@ -41,6 +42,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         {
             "id": p.id,
             "name": p.name,
+            "price": p.price,
             "total_sold": p.total_sold
         }
         for p in top_products
